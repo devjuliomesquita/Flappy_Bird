@@ -15,6 +15,13 @@ const flappyBird = {
     altura:24,
     x:10,
     y:50,
+    gravidade:0.25,
+    velocidade:0,
+
+    atualizar(){
+        flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
+        flappyBird.y = flappyBird.y + flappyBird.velocidade;
+    },
     desenha(){
         contexto.drawImage(
             sprites,
@@ -87,6 +94,7 @@ const plFundo = {
 //FUNÇÃO DE CHAMAR AS TELAS
 function loop(){
 
+    flappyBird.atualizar();
     plFundo.desenha();
     chao.desenha();
     flappyBird.desenha();
