@@ -91,13 +91,80 @@ const plFundo = {
     }
 };
 
+//MOSTRAR A TELA DE INICIO
+
+const getReady = {
+    spriteX:134,
+    spriteY:0,
+    largura:174,
+    altura:152,
+    x:(canvas.width/2) - (174/2),
+    y:50,
+    desenha(){
+        contexto.drawImage(
+            sprites,
+            getReady.spriteX, getReady.spriteY,
+            getReady.largura, getReady.altura,
+            getReady.x, getReady.y,
+            getReady.largura, getReady.altura
+        );
+    }
+};
+
+//DIVISÃO POR TELAS
+
+let telaAtiva = {};
+function mudarParaTela(novaTela) {
+    telaAtiva = novaTela;
+}
+
+const Telas = {
+    INICIO:{
+        desenha() {
+            plFundo.desenha();
+            chao.desenha();
+            flappyBird.desenha();
+            getReady.desenha();
+        },
+        click(){
+            mudarParaTela(Telas.JOGO);
+        },
+        atualizar(){
+
+        }
+    }
+};
+
+Telas.JOGO = {
+    desenhar(){
+        plFundo.desenha();
+        chao.desenha();
+        flappyBird.desenha();
+    },
+    atualizar(){
+        flappyBird.atualizar();
+    }
+};
+
+
+
+
+
+
+
 //FUNÇÃO DE CHAMAR AS TELAS
 function loop(){
 
-    flappyBird.atualizar();
-    plFundo.desenha();
-    chao.desenha();
-    flappyBird.desenha();
+    telaAtiva.desenha();
+    telaAtiva.atualizar();
     requestAnimationFrame(loop);
 };
+
+window.addEventListener('click', function() {
+    if(telaAtiva.click){
+        telaAtiva.click();
+    }
+});
+
+mudarParaTela(Telas.INICIO);
 loop();
