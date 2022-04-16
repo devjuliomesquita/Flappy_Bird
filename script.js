@@ -132,11 +132,12 @@ const Telas = {
         atualizar(){
 
         }
-    }
+    },
+    
 };
 
 Telas.JOGO = {
-    desenhar(){
+    desenha(){
         plFundo.desenha();
         chao.desenha();
         flappyBird.desenha();
@@ -144,13 +145,7 @@ Telas.JOGO = {
     atualizar(){
         flappyBird.atualizar();
     }
-};
-
-
-
-
-
-
+}
 
 //FUNÇÃO DE CHAMAR AS TELAS
 function loop(){
