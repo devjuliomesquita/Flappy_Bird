@@ -1,5 +1,8 @@
 console.log('Flappy Bird');
 
+//FRAMES
+let frames = 0;
+
 //SONS DE COLISÃO
 const som_HIT = new Audio();
 som_HIT.src = './Efeitos/efeitos_hit.wav';
@@ -41,13 +44,12 @@ function criarFappyBird() {
         pulo:4.6,
         pular(){
             flappyBird.velocidade = - flappyBird.pulo;
-
         },
         gravidade:0.25,
         velocidade:0,
 
         atualizar(){
-            if(fazColisao(flappyBird,chao)){
+            if(fazColisao(flappyBird,globais.chao)){
                 som_HIT.play();
                 setTimeout(()=>{
                     mudarParaTela(Telas.INICIO);
@@ -58,10 +60,29 @@ function criarFappyBird() {
             flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
             flappyBird.y = flappyBird.y + flappyBird.velocidade;
         },
+        movimentos: [
+            { spriteX: 0, spriteY:  0, },
+            { spriteX: 0, spriteY: 26, },
+            { spriteX: 0, spriteY: 52, },
+            { spriteX: 0, spriteY: 26, },
+        ],
+        frameAtual:0,
+        atualizarFrame(){
+            const intervaloFrame = 10;
+            const passouIntervalo = frames % intervaloFrame === 0;
+            if(passouIntervalo){
+                const baseIncremento = 1;
+                const incremento = baseIncremento + flappyBird.frameAtual;
+                const baseRepeticao = flappyBird.movimentos.length;
+                flappyBird.frameAtual = incremento % baseRepeticao;
+            }
+        },
         desenha(){
+            flappyBird.atualizarFrame();
+            const { spriteX, spriteY } = flappyBird.movimentos[flappyBird.frameAtual];
             contexto.drawImage(
                 sprites,
-                flappyBird.spriteX, flappyBird.spriteY,
+                spriteX, spriteY,
                 flappyBird.largura, flappyBird.altura,
                 flappyBird.x, flappyBird.y,
                 flappyBird.largura, flappyBird.altura
@@ -208,6 +229,7 @@ function loop(){
 
     telaAtiva.desenha();
     telaAtiva.atualizar();
+    frames = frames + 1;
     requestAnimationFrame(loop);
 };
 
