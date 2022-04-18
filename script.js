@@ -41,9 +41,10 @@ function criarFappyBird() {
         altura:24,
         x:10,
         y:50,
-        pulo:4.6,
+        pulo:4,
         pular(){
             flappyBird.velocidade = - flappyBird.pulo;
+            som_PULO.play();
         },
         gravidade:0.25,
         velocidade:0,
@@ -51,9 +52,7 @@ function criarFappyBird() {
         atualizar(){
             if(fazColisao(flappyBird,globais.chao)){
                 som_HIT.play();
-                setTimeout(()=>{
-                    mudarParaTela(Telas.GAME_OVER);
-                }, 150);                
+                mudarParaTela(Telas.GAME_OVER);
                 return;
             }
 
@@ -276,9 +275,7 @@ function criarCanos(){
                 par.x -=2;
                 if(canos.temColisaoFB(par)){
                     som_HIT.play();
-                    setTimeout(()=>{
                     mudarParaTela(Telas.GAME_OVER);
-                    }, 150);
                 };
                 if(par.x + canos.largura<= 0){
                     canos.pares.shift();
