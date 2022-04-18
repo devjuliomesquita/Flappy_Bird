@@ -177,6 +177,96 @@ const getReady = {
     }
 };
 
+//CRIAR OS CANOS
+function criarCanos(){
+    
+    const canos = {
+        largura: 52,
+        altura: 400,
+        chao:{
+            spriteX:0,
+            spriteY:169,
+        },
+        ceu:{
+            spriteX:52,
+            spriteY:169,
+        },
+        espaco:80,
+        desenha(){
+            canos.pares.forEach(function(par){
+                const yRandom = -par.y;
+                const espacamentoEntreCanos = 90;
+                const canoCeuX = par.x;
+                const canoCeuY = yRandom;
+                //console.log('cano criado');
+                contexto.drawImage(
+                    sprites,
+                    canos.ceu.spriteX, canos.ceu.spriteY,
+                    canos.largura, canos.altura,
+                    canoCeuX, canoCeuY,
+                    canos.largura, canos.altura
+                )
+                const canoChaoX = par.x;
+                const canoChaoY = canos.altura + espacamentoEntreCanos + yRandom;
+                //console.log('cano criado');
+                contexto.drawImage(
+                    sprites,
+                    canos.chao.spriteX, canos.chao.spriteY,
+                    canos.largura, canos.altura,
+                    canoChaoX, canoChaoY,
+                    canos.largura, canos.altura
+                )
+                par.canoCeu = {
+                    x:canoCeuX,
+                    y:canos.altura + canoCeuY
+                }
+                par.canoChao = {
+                    x:canoChaoX,
+                    y:canoChaoY
+                }
+            });
+            
+        },
+        temColisaoFB(par){
+            const cabecaFB = globais.flappyBird.y;
+            const peFB = globais.flappyBird.y + globais.flappyBird.altura;
+
+            if((globais.flappyBird.x + globais.flappyBird.largura) >= par.x){
+                //INVADIU A ÁREA DOS CANOS
+                if(cabecaFB <= par.canoCeu.y){
+                    return true;
+                }
+                if(peFB >= par.canoChao.y){
+                    return true;
+                }
+            }
+            return false;
+        },
+        pares:[],
+        atualizar(){
+            const passou100Frames = frames % 100 === 0;
+            if(passou100Frames){
+                //EXECUTE UMA COISA
+                canos.pares.push({
+                        x: canvas.width,
+                        y: 150 * (Math.random() + 1) ,
+                });
+            }
+            canos.pares.forEach(function(par){
+                par.x -=2;
+                if(canos.temColisaoFB(par)){
+                    mudarParaTela(Telas.INICIO);
+                };
+                if(par.x + canos.largura<= 0){
+                    canos.pares.shift();
+                };
+            });
+        },
+
+    }
+    return canos;
+};
+
 //DIVISÃO POR TELAS
 
 const globais = {};
@@ -193,18 +283,22 @@ const Telas = {
         inicializa(){
             globais.flappyBird = criarFappyBird();
             globais.chao = criarChao();
+            globais.canos = criarCanos();
         },
         desenha() {
             plFundo.desenha();
+            globais.canos.desenha();
             globais.chao.desenha();
             globais.flappyBird.desenha();
             getReady.desenha();
+            
         },
         click(){
             mudarParaTela(Telas.JOGO);
         },
         atualizar(){
             globais.chao.atualizar();
+            
         }
     },
     
@@ -213,6 +307,7 @@ const Telas = {
 Telas.JOGO = {
     desenha(){
         plFundo.desenha();
+        globais.canos.desenha();
         globais.chao.desenha();
         globais.flappyBird.desenha();
     },
@@ -220,6 +315,8 @@ Telas.JOGO = {
         globais.flappyBird.pular();
     },
     atualizar(){
+        globais.chao.atualizar();
+        globais.canos.atualizar();
         globais.flappyBird.atualizar();
     }
 }
